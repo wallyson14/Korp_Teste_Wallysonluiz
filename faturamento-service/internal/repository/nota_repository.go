@@ -109,27 +109,6 @@ func DeletarNota(id uint) error {
 	})
 }
 
-// Imprimir fecha a nota e baixa o estoque de cada item, tudo dentro de
-// uma transação com lock na linha da nota (SELECT FOR UPDATE). O lock
-// serializa impressões concorrentes da MESMA nota: uma segunda tentativa
-// de imprimir a mesma nota espera a primeira terminar antes de checar o
-// status.
-//
-// Idempotente por natureza do domínio: imprimir é uma operação que só faz
-// sentido acontecer uma vez por nota. Se a nota já está Fechada, a função
-// não trata isso como erro — devolve o estado atual sem tocar no estoque
-// de novo. Isso cobre retry de rede e duplo clique sem exigir um header
-// de Idempotency-Key: o próprio ID da nota já é a chave de idempotência.
-//
-// baixarSaldo é injetado pelo chamador (o client HTTP do estoque-service)
-// para manter este pacote livre de dependência de transporte HTTP.
-//
-// Limitação assumida: a baixa de estoque é uma chamada HTTP para outro
-// serviço, não participa da transação local. Se o item N de M falhar, a
-// transação é desfeita (a nota continua Aberta) mas os itens 1..N-1 já
-// tiveram o saldo debitado no estoque-service — não há um saga/compensação
-// automática. Para o escopo deste projeto o erro retornado identifica o
-// item que falhou, permitindo investigação manual.
 func Imprimir(id uint, baixarSaldo func(produtoID uint, quantidade int) error) (*domain.NotaFiscal, error) {
 	var nota domain.NotaFiscal
 

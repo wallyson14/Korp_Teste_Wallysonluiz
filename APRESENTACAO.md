@@ -41,8 +41,7 @@ Gin (roteamento e HTTP) e GORM (ORM sobre PostgreSQL, incluindo migrations autom
 **Tratamento de erros e exceções no backend**
 Erros sentinela por camada (`errors.New` na camada de repositório/client, verificados com `errors.Is` na camada HTTP), mapeados para o status HTTP apropriado em cada handler (400, 404, 409, 422, 503). `gin.Recovery()` como rede de segurança contra panics inesperados. Timeout explícito (5s) nas chamadas HTTP entre os dois microsserviços, para não deixar uma requisição pendurada se o outro serviço não responder.
 
-**LINQ**
-Não se aplica — o backend foi implementado em Go, não em C#.
+ o backend foi implementado em Go
 
 ## Requisitos do desafio
 

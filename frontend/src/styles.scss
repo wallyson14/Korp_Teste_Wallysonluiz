@@ -1,0 +1,167 @@
+// Angular Material — importa o tema base
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// Paleta customizada — vermelho vivo da marca Korp ERP como primary
+// (mesmo tom do botão "Saiba mais!" do site institucional)
+$korp-red-palette: (
+  50: #fde8ea,
+  100: #fbc3c9,
+  200: #f79aa4,
+  300: #f3717f,
+  400: #f05063,
+  500: #ef3b4d,
+  600: #da2f42,
+  700: #c02536,
+  800: #a71c2c,
+  900: #7d101d,
+  A100: #ffb3ba,
+  A200: #ff8090,
+  A400: #ff4d68,
+  A700: #ff3355,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: white,
+    400: white,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: white,
+    A400: white,
+    A700: white,
+  ),
+);
+
+$korp-primary: mat.define-palette($korp-red-palette, 500, 300, 700);
+$korp-accent: mat.define-palette(mat.$blue-gray-palette, 600);
+
+// Warn (ações destrutivas: excluir) — vinho mais escuro que o primary, de
+// propósito: os dois são vermelhos, mas o warn precisa ser reconhecível
+// num relance como "diferente/mais sério" do que os botões de ação normal.
+$korp-warn-palette: (
+  50: #f8e3e6,
+  100: #eeb9c1,
+  200: #e38c98,
+  300: #d75f6f,
+  400: #cd3c4f,
+  500: #b0142b,
+  600: #a01227,
+  700: #8c0e21,
+  800: #780b1b,
+  900: #56060f,
+  A100: #ff8a97,
+  A200: #ff5768,
+  A400: #ff2440,
+  A700: #ff0a29,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: white,
+    400: white,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: white,
+    A400: white,
+    A700: white,
+  ),
+);
+
+$korp-warn: mat.define-palette($korp-warn-palette, 500, 300, 700);
+
+$korp-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $korp-primary,
+      accent: $korp-accent,
+      warn: $korp-warn,
+    ),
+    typography: mat.define-typography-config(),
+    density: 0,
+  )
+);
+
+@include mat.all-component-themes($korp-theme);
+
+// ── Reset e base ──────────────────────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  // fonte única do vermelho de marca — reaproveitado no header e em destaques
+  // de UI fora do Angular Material (que já pega o primary acima sozinho)
+  --korp-brand: #ef3b4d;
+  --korp-brand-rgb: 239, 59, 77;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  font-size: 14px;
+  background: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+}
+
+// ── Google Fonts ──────────────────────────────────────────────────────────────
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+// ── Snackbar customizados ─────────────────────────────────────────────────────
+.snack-error .mdc-snackbar__surface {
+  background: #dc2626 !important;
+  color: #fff !important;
+}
+
+.snack-success .mdc-snackbar__surface {
+  background: #16a34a !important;
+  color: #fff !important;
+}
+
+// ── Scrollbar ─────────────────────────────────────────────────────────────────
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+// ── Material overrides ────────────────────────────────────────────────────────
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-shape: 8px;
+}
+
+.mat-mdc-dialog-container {
+  --mdc-dialog-container-shape: 12px;
+}

@@ -1,0 +1,86 @@
+ # esse docker-compose.yml define os serviços necessários para a aplicação,
+ # incluindo o banco de dados PostgreSQL, os serviços de estoque e faturamento, 
+ # e o frontend Angular. Ele também configura as redes e volumes necessários 
+ # a comunicação entre os serviços e a persistência dos dados do banco.
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: korp_postgres
+    environment:
+      POSTGRES_USER: korp
+      POSTGRES_PASSWORD: korp123
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:z
+    ports:
+      - "5432:5432"
+    networks:
+      - korp_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U korp -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  estoque-service:
+    build: ./estoque-service
+    container_name: korp_estoque
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: korp
+      DB_PASSWORD: korp123
+      DB_NAME: estoque_db
+      PORT: 8081
+      GIN_MODE: release
+      APP_VERSION: 1.0.0
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - korp_network
+    restart: on-failure
+
+  faturamento-service:
+    build: ./faturamento-service
+    container_name: korp_faturamento
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: korp
+      DB_PASSWORD: korp123
+      DB_NAME: faturamento_db
+      PORT: 8082
+      GIN_MODE: release
+      APP_VERSION: 1.0.0
+      ESTOQUE_URL: http://estoque-service:8081
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - korp_network
+    restart: on-failure
+
+  frontend:
+    build: ./frontend
+    container_name: korp_frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - estoque-service
+      - faturamento-service
+    networks:
+      - korp_network
+
+networks:
+  korp_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

@@ -35,32 +35,7 @@ import {
   ConfirmDialogData,
 } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 
-/**
- * NotasComponent — tela de gestão de notas fiscais.
- *
- * Ciclos de vida Angular:
- * - ngOnInit: assina os dois BehaviorSubjects (notas$ e produtos$) e
- *   dispara os carregamentos iniciais em paralelo — sem Promise.all
- *   porque RxJS subscribers são independentes.
- * - ngOnDestroy: emite no destroy$ e limpa o Map de formulários para
- *   liberar todos os FormGroup criados dinamicamente.
- *
- * RxJS utilizado:
- * - takeUntil(destroy$): protege todas as subscriptions contra memory leak.
- * - finalize(): garante reset de estado (spinners de impressão/criação)
- *   tanto em caso de sucesso quanto de erro — comportamento equivalente
- *   ao bloco finally em try/catch.
- * - BehaviorSubject (nos serviços): estado reativo sem polling HTTP.
- *
- * F-BUG-02 CORRIGIDO: MatChipsModule removido — não é usado no template.
- * F-BUG-03 CORRIGIDO: formsItem migrado de Record<number, FormGroup>
- *   para Map<number, FormGroup>. O método getFormItem() agora é puro —
- *   não cria efeito colateral no template. No template, os bindings que
- *   chamam getFormItem() são seguros porque Map.get() é idempotente.
- * F-BUG-04 CORRIGIDO: ngOnDestroy limpa o Map inteiro, e deletarNota()
- *   remove a entrada específica do formulário ao deletar a nota.
- * F-BUG-13 CORRIGIDO: carregando = true no campo (não no método).
- */
+
 @Component({
   selector: 'app-notas',
   standalone: true,
@@ -535,17 +510,12 @@ export class NotasComponent implements OnInit, OnDestroy {
 
   private readonly destroy$ = new Subject<void>();
 
-  // F-BUG-03/04 CORRIGIDO: Map em vez de Record para armazenar FormGroups.
-  // Map.has() e Map.delete() são semântica correta para coleções dinâmicas.
-  // Record<number, FormGroup> usa coerção de tipo implícita (chave vira string)
-  // e não possui método delete() nativo — Map é a estrutura certa aqui.
   private readonly formsItem = new Map<number, FormGroup>();
 
   notas: NotaFiscal[] = [];
   produtos: Produto[] = [];
   colunasItens = ['codigo', 'descricao', 'quantidade', 'remover'];
 
-  // F-BUG-13 CORRIGIDO: true desde o início
   carregando = true;
   criando = false;
 
@@ -575,13 +545,8 @@ export class NotasComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    // F-BUG-04 CORRIGIDO: limpa todos os FormGroups do Map ao destruir
     this.formsItem.clear();
   }
-
-  // F-BUG-03 CORRIGIDO: getFormItem é idempotente — retorna sempre o mesmo
-  // FormGroup para uma nota, sem criar efeito colateral na segunda chamada.
-  // Seguro para uso em template binding com OnPush.
   getFormItem(notaId: number): FormGroup {
     if (!this.formsItem.has(notaId)) {
       this.formsItem.set(
@@ -643,17 +608,6 @@ export class NotasComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  /**
-   * imprimir — fluxo principal do desafio:
-   *
-   * 1. imprimindo[nota.id] = true → spinner visível na UI imediatamente
-   * 2. POST /notas/:id/imprimir → backend executa em duas fases:
-   *    - FASE 1: valida saldo de todos os itens (sem modificar nada)
-   *    - FASE 2: baixa cada saldo via SELECT FOR UPDATE + fecha a nota
-   * 3. Em sucesso: snackbar de confirmação, nota aparece como Fechada
-   * 4. Em erro: interceptor HTTP exibe mensagem do backend via snackbar
-   * 5. finalize(): imprimindo[nota.id] = false independente do resultado
-   */
   imprimir(nota: NotaFiscal): void {
     this.imprimindo[nota.id] = true;
     this.cdr.markForCheck();
@@ -697,7 +651,6 @@ export class NotasComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: () => {
-              // F-BUG-04 CORRIGIDO: remove o FormGroup da nota deletada do Map
               this.formsItem.delete(nota.id);
             },
           });

@@ -1,4 +1,4 @@
-# Apresentação — Desafio Técnico Korp ERP
+# Apresentação - Desafio Técnico Korp ERP
 
 **Candidato:** Wallyson Luiz
 **Vaga:** Estágio de Desenvolvimento | C# ou Go (Golang) + Angular
@@ -8,10 +8,6 @@
 Sistema de emissão de notas fiscais com controle de estoque, desenvolvido conforme o desafio técnico da Korp. Arquitetura de dois microsserviços em **Go** (estoque-service e faturamento-service, cada um com seu próprio banco PostgreSQL) e frontend em **Angular 17 + Angular Material**, tudo containerizado com **Docker Compose**.
 
 Documentação técnica completa — arquitetura, endpoints da API, como rodar o projeto — está no [README.md](./README.md).
-
-## Vídeo de apresentação
-
-[link do vídeo aqui]
 
 ## Funcionalidades
 

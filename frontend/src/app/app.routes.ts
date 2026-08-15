@@ -1,9 +1,5 @@
 import { Routes } from '@angular/router';
 
-/**
- * Rotas com lazy loading: cada feature é carregada apenas quando acessada.
- * O Angular compila cada rota em um chunk separado, reduzindo o bundle inicial.
- */
 export const routes: Routes = [
   {
     path: '',

@@ -76,10 +76,6 @@ func DeletarNota(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "nota excluída com sucesso"})
 }
 
-// AdicionarItemNota valida o produto no estoque-service e adiciona o item
-// à nota. A baixa de saldo NÃO acontece aqui — só na impressão (Imprimir),
-// para bater com o fluxo descrito no desafio: o saldo só é efetivamente
-// consumido quando a nota é impressa/fechada.
 func AdicionarItemNota(c *gin.Context) {
 	notaID, err := parseUintParam(c, "id")
 	if err != nil {
@@ -174,10 +170,6 @@ func RemoverItemNota(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "item removido com sucesso"})
 }
 
-// Imprimir é o fluxo central do desafio: valida que a nota está aberta,
-// baixa o saldo de cada item no estoque-service e fecha a nota. Ver
-// repository.Imprimir para o detalhe do lock de concorrência e da
-// idempotência (reimprimir uma nota já fechada retorna 200, não erro).
 func Imprimir(c *gin.Context) {
 	id, err := parseUintParam(c, "id")
 	if err != nil {

@@ -3,8 +3,6 @@
 
 @include mat.core();
 
-// Paleta customizada — vermelho vivo da marca Korp ERP como primary
-// (mesmo tom do botão "Saiba mais!" do site institucional)
 $korp-red-palette: (
   50: #fde8ea,
   100: #fbc3c9,
@@ -41,9 +39,6 @@ $korp-red-palette: (
 $korp-primary: mat.define-palette($korp-red-palette, 500, 300, 700);
 $korp-accent: mat.define-palette(mat.$blue-gray-palette, 600);
 
-// Warn (ações destrutivas: excluir) — vinho mais escuro que o primary, de
-// propósito: os dois são vermelhos, mas o warn precisa ser reconhecível
-// num relance como "diferente/mais sério" do que os botões de ação normal.
 $korp-warn-palette: (
   50: #f8e3e6,
   100: #eeb9c1,
@@ -93,7 +88,6 @@ $korp-theme: mat.define-light-theme(
 
 @include mat.all-component-themes($korp-theme);
 
-// ── Reset e base ──────────────────────────────────────────────────────────────
 *,
 *::before,
 *::after {
@@ -101,8 +95,6 @@ $korp-theme: mat.define-light-theme(
 }
 
 :root {
-  // fonte única do vermelho de marca — reaproveitado no header e em destaques
-  // de UI fora do Angular Material (que já pega o primary acima sozinho)
   --korp-brand: #ef3b4d;
   --korp-brand-rgb: 239, 59, 77;
 }
@@ -119,11 +111,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-// ── Google Fonts ──────────────────────────────────────────────────────────────
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
-// ── Snackbar customizados ─────────────────────────────────────────────────────
+// Snackbar customizados 
 .snack-error .mdc-snackbar__surface {
   background: #dc2626 !important;
   color: #fff !important;
@@ -134,7 +125,6 @@ body {
   color: #fff !important;
 }
 
-// ── Scrollbar ─────────────────────────────────────────────────────────────────
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -153,7 +143,6 @@ body {
   background: #94a3b8;
 }
 
-// ── Material overrides ────────────────────────────────────────────────────────
 .mat-mdc-form-field {
   width: 100%;
 }

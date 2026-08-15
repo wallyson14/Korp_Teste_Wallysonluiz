@@ -31,16 +31,6 @@ import {
   ConfirmDialogData,
 } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 
-/**
- * ProdutosComponent — tela de cadastro e listagem de produtos.
- *
- * Ciclos de vida Angular:
- * - ngOnInit: assina o BehaviorSubject do serviço e dispara o carregamento
- *   inicial. A subscription é protegida por takeUntil(destroy$).
- * - ngOnDestroy: emite no destroy$ para cancelar todas as subscriptions
- *   ativas, prevenindo memory leaks ao navegar para outra rota.
- *
- */
 @Component({
   selector: 'app-produtos',
   standalone: true,
@@ -362,7 +352,6 @@ export class ProdutosComponent implements OnInit, OnDestroy {
   produtos: Produto[] = [];
   colunas = ['codigo', 'descricao', 'saldo', 'acoes'];
 
-  // carregando=false antes dos dados chegarem
   carregando = true;
   salvando = false;
   mostrarFormulario = false;
@@ -407,7 +396,6 @@ export class ProdutosComponent implements OnInit, OnDestroy {
   editar(produto: Produto): void {
     this.produtoEditando = produto;
     this.form.patchValue({ descricao: produto.descricao, saldo: produto.saldo });
-    // Código é imutável após criação — desabilitamos para deixar claro na UI
     this.form.get('codigo')?.disable();
     this.mostrarFormulario = true;
   }

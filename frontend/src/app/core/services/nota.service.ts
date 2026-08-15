@@ -9,13 +9,7 @@ import {
   ImprimirNotaResponse,
 } from '../models/models';
 
-/**
- * NotaService — camada de acesso à API do faturamento-service.
- *
- * Mesmo padrão de BehaviorSubject + switchMap do ProdutoService.
- * F-BUG-06 CORRIGIDO: adicionarItem e removerItem agora têm tipagem
- * forte (ItemNota e { message: string }) em vez de Observable<unknown>.
- */
+
 @Injectable({ providedIn: 'root' })
 export class NotaService {
   private readonly http = inject(HttpClient);

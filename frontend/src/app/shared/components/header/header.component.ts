@@ -2,14 +2,6 @@ import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 
-/**
- * HeaderComponent — sidebar de navegação.
- *
- * F-Q-02/03 CORRIGIDO: a versão anterior usava mat-list-item como atributo
- * de diretiva em elementos <a>. No Angular Material 17 MDC isso é deprecado
- * e gera warnings. Substituído por navegação com estilos próprios — mais
- * controle visual e sem dependência de MatListModule.
- */
 @Component({
   selector: 'app-header',
   standalone: true,

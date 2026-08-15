@@ -1,8 +1,3 @@
- # esse docker-compose.yml define os serviços necessários para a aplicação,
- # incluindo o banco de dados PostgreSQL, os serviços de estoque e faturamento, 
- # e o frontend Angular. Ele também configura as redes e volumes necessários 
- # a comunicação entre os serviços e a persistência dos dados do banco.
-
 services:
   postgres:
     image: postgres:15-alpine

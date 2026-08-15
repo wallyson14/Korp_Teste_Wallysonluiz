@@ -3,17 +3,6 @@ import { inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, throwError } from 'rxjs';
 
-/**
- * Interceptor funcional (Angular 17+) que centraliza o tratamento de erros HTTP.
- *
- * Ciclo de vida Angular utilizado: nenhum hook de componente — este interceptor
- * age na camada de infraestrutura via injeção de dependência funcional.
- *
- * Por que interceptor e não try/catch em cada serviço?
- * - Evita duplicação de lógica de erro em cada serviço
- * - Garante feedback visual consistente independente de qual serviço falhou
- * - Centraliza o mapeamento de HTTP status → mensagem amigável
- */
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const snackBar = inject(MatSnackBar);
 

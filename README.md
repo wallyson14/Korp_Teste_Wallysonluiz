@@ -1,4 +1,4 @@
-# Sistema de Gestão de Notas Fiscais com Arquitetura de Microsserviços
+# Sistema de Gestão de Notas Fiscais com Arquitetura de Microserviços
 
 Aplicação full stack desenvolvida para simular um cenário real de emissão de notas fiscais e controle de estoque, utilizando arquitetura baseada em microsserviços.
 O projeto explora desafios comuns encontrados em sistemas corporativos, como integração entre serviços, persistência de dados, concorrência em operações críticas, tratamento de falhas e sincronização de processos de negócio.

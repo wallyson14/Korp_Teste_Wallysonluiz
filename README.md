@@ -87,6 +87,39 @@ Funcionalidades:
 
 ---
 
+### Resiliência e integridade dos dados
+
+- **Tratamento de falhas entre microsserviços**: se o serviço de estoque cair, o de faturamento devolve uma mensagem de erro clara em vez de travar, e volta a funcionar sozinho assim que o estoque volta ao ar — sem precisar reiniciar nada
+- **Concorrência**: duas notas disputando o saldo do mesmo produto ao mesmo tempo nunca resultam em saldo negativo — uma delas é bloqueada até a outra terminar (lock a nível de banco de dados)
+- **Idempotência na impressão**: reenviar o pedido de impressão de uma nota que já foi impressa (por exemplo, por uma falha de rede que fez o cliente tentar de novo) não gera erro nem debita o estoque uma segunda vez
+
+## Detalhamento técnico
+
+**Ciclos de vida Angular utilizados**
+`ngOnInit` para assinar os `Observable`s de estado e disparar o carregamento inicial dos dados; `ngOnDestroy` para emitir no `Subject` de destruição (`destroy$`) e cancelar todas as subscriptions ativas, evitando memory leak ao trocar de tela.
+
+**Uso de RxJS**
+Sim. `BehaviorSubject` para manter o estado reativo das listas de produtos/notas nos services (guarda o último valor emitido, então a tela já mostra dado ao assinar de novo); `switchMap` para encadear a re-listagem depois de criar/editar/excluir sem criar subscriptions órfãs; `takeUntil(destroy$)` para cancelamento automático; `finalize` para sempre desligar indicadores de carregamento, em sucesso ou erro.
+
+**Outras bibliotecas**
+RxJS (nativo do Angular) e Angular Material.
+
+**Biblioteca de componentes visuais**
+Angular Material — tabelas (`MatTable`), formulários reativos (`MatFormField`, `MatInput`, `MatSelect`), diálogo de confirmação (`MatDialog`), notificações (`MatSnackBar`), painéis expansíveis (`MatExpansionPanel`) na tela de notas.
+
+**Gerenciamento de dependências no Golang**
+`go.mod`/`go.sum` (Go Modules), com `go mod download` executado em uma etapa isolada do Dockerfile multi-stage — aproveita cache de camada do Docker, então as dependências só são rebaixadas se `go.mod`/`go.sum` mudarem.
+
+**Frameworks utilizados no Golang**
+Gin (roteamento e HTTP) e GORM (ORM sobre PostgreSQL, incluindo migrations automáticas e transações).
+
+**Tratamento de erros e exceções no backend**
+Erros sentinela por camada (`errors.New` na camada de repositório/client, verificados com `errors.Is` na camada HTTP), mapeados para o status HTTP apropriado em cada handler (400, 404, 409, 422, 503). `gin.Recovery()` como rede de segurança contra panics inesperados. Timeout explícito (5s) nas chamadas HTTP entre os dois microsserviços, para não deixar uma requisição pendurada se o outro serviço não responder.
+
+**LINQ**
+Não se aplica — o backend foi implementado em Go, não em C#.
+---
+
 ## Como executar
 
 ### Pré-requisitos
